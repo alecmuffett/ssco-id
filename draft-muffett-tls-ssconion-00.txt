@@ -60,8 +60,6 @@ Internet-Draft                     I-D                      January 2018
 
 1.  Introduction
 
-   TBD
-
 1.1.  Terminology
 
    In this document, the key words "MUST", "MUST NOT", "REQUIRED",
@@ -92,19 +90,21 @@ Internet-Draft                     I-D                      January 2018
       DNS name syntax as defined in Section 3.5 of [RFC1034] and
       Section 2.1 of [RFC1123].
 
-2.  [ Insert content sections here ]
+2.  Self-Signed TLS Certificates for Onion Services
 
 2.1.  Rationale
 
-   TBD
+   Tor .onion names are self-asserted cryptographic identifiers which
+   enable one form of communication on the Tor network.
 
-2.2.  Certificate Fields
+   Possession of the private key for a given .onion name provides
+   defacto "domain ownership" of that .onion name, and also the ability
+   to communicate on the Tor network as that .onion name.
 
-   All fields that are described in this section MUST be present for a
-   "Self-Signed TLS Certificate for Onion Services" to be valid.
-
-   All fields which are not described in this section MUST NOT exist in
-   such a certificate.
+   Given the self-asserted (and even sometimes ephemeral) nature of
+   .onion names, combined with the proliferation of protocols which
+   mandate HTTPS, the requirement for involvement of a Certificate
+   Authority to issue TLS certificates for a .onion name is a burden.
 
 
 
@@ -113,6 +113,26 @@ Muffett                   Expires July 22, 2018                 [Page 2]
 
 Internet-Draft                     I-D                      January 2018
 
+
+   Therefore: we propose a standard for Self-Signed TLS Certificates for
+   Onion Services, which Tor-enabled clients may optionally honour as
+   being as being equally trustworthy to a CA-supplied DV certificate.
+
+   This proposal does not replace certification of a .onion name as
+   currently, or in future, provided under CABForum BRs; in face we call
+   for extension of CABForum BRs to include DV certificates for "Next
+   Generation" Onion addresses.
+
+   Instead: this standard provides an additional specification to offer
+   ad-hoc HTTPS capability to enabled clients in limited circumstances.
+
+2.2.  Certificate Fields
+
+   All fields that are described in this section MUST be present for a
+   "Self-Signed TLS Certificate for Onion Services" to be valid.
+
+   All fields which are not described in this section MUST NOT exist in
+   such a certificate.
 
 2.2.1.  Signature Algorithm
 
@@ -138,6 +158,18 @@ Internet-Draft                     I-D                      January 2018
 
    The version field MUST conform with [RFC5280] section 4.1.2.1
 
+
+
+
+
+
+
+
+Muffett                   Expires July 22, 2018                 [Page 3]
+
+Internet-Draft                     I-D                      January 2018
+
+
 2.2.4.  Serial Number
 
    The Serial Number MUST conform with [RFC5280] section 4.1.2.2
@@ -161,15 +193,6 @@ Internet-Draft                     I-D                      January 2018
    o  NotBefore and NotAfter are from the certificate Validity and are
       represented in ASCII GeneralizedTime Zulu
 
-
-
-
-
-Muffett                   Expires July 22, 2018                 [Page 3]
-
-Internet-Draft                     I-D                      January 2018
-
-
    Thus a serial number for a certificate valid from midnight 1 January
    2018 UTC to 13:14:15 on 30 June 2019 UTC for
    "www.facebookcorewwwi.onion" would be:
@@ -191,6 +214,17 @@ Internet-Draft                     I-D                      January 2018
 
    Other Issuer fields MUST conform with [RFC5280] section 4.1.2.4
    conforming to CA/B-Forum BRs for DV Certificates.
+
+
+
+
+
+
+
+Muffett                   Expires July 22, 2018                 [Page 4]
+
+Internet-Draft                     I-D                      January 2018
+
 
 2.2.6.  Validity
 
@@ -217,15 +251,6 @@ Internet-Draft                     I-D                      January 2018
 
    o  TODO: It would be nice to tighten this up a bit.
 
-
-
-
-
-Muffett                   Expires July 22, 2018                 [Page 4]
-
-Internet-Draft                     I-D                      January 2018
-
-
 2.2.9.  Extensions
 
    The Extensions MUST contain a Subject Alternative Name extension.
@@ -246,6 +271,16 @@ Internet-Draft                     I-D                      January 2018
 
    o  The given "DNS names" MUST NOT be other than a ".onion name" or
       "wildcard .onion name".
+
+
+
+
+
+
+Muffett                   Expires July 22, 2018                 [Page 5]
+
+Internet-Draft                     I-D                      January 2018
+
 
 2.2.9.2.  Subject Alternative Names Considerations
 
@@ -272,16 +307,6 @@ Internet-Draft                     I-D                      January 2018
       cite a solitary "base .onion name" amongst the Subject Alternative
       Names that it lists.
 
-
-
-
-
-
-Muffett                   Expires July 22, 2018                 [Page 5]
-
-Internet-Draft                     I-D                      January 2018
-
-
    o  Clients which support Self-Signed TLS Certificates for Onion
       Services MUST NOT trust certificates that cite more than one "base
       .onion name".
@@ -303,6 +328,15 @@ Internet-Draft                     I-D                      January 2018
    This standard SHALL NOT prohibit generation of Self-Signed TLS
    Certificates for Onion Services for either of these, nor for future,
    types of .onion name.
+
+
+
+
+
+Muffett                   Expires July 22, 2018                 [Page 6]
+
+Internet-Draft                     I-D                      January 2018
+
 
    Clients SHOULD implement fine-grained checks to distingush, and to
    eventually deprecate, legacy types of .onion name.
@@ -331,46 +365,12 @@ Internet-Draft                     I-D                      January 2018
               Domain Name", RFC 7686, DOI 10.17487/RFC7686, October
               2015, <https://www.rfc-editor.org/info/rfc7686>.
 
-
-
-Muffett                   Expires July 22, 2018                 [Page 6]
-
-Internet-Draft                     I-D                      January 2018
-
-
 Author's Address
 
    Alec Muffett
    Open Rights Group
 
    Email: alec.muffett@gmail.com
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

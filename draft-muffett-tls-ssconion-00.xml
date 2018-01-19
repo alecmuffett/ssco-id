@@ -49,8 +49,6 @@ with “.onion” names as-defined in <xref target="RFC7686"/>, for onion services.<
 
 <section anchor="introduction" title="Introduction">
 
-<t>TBD</t>
-
 <section anchor="terminology" title="Terminology">
 
 <t>In this document, the key words “MUST”, “MUST NOT”, “REQUIRED”,
@@ -82,11 +80,33 @@ of <xref target="RFC1123"/>.</t>
 
 </section>
 </section>
-<section anchor="insert-content-sections-here-" title="[ Insert content sections here ]">
+<section anchor="self-signed-tls-certificates-for-onion-services" title="Self-Signed TLS Certificates for Onion Services">
 
 <section anchor="rationale" title="Rationale">
 
-<t>TBD</t>
+<t>Tor .onion names are self-asserted cryptographic identifiers which
+enable one form of communication on the Tor network.</t>
+
+<t>Possession of the private key for a given .onion name provides defacto
+“domain ownership” of that .onion name, and also the ability to
+communicate on the Tor network as that .onion name.</t>
+
+<t>Given the self-asserted (and even sometimes ephemeral) nature of
+.onion names, combined with the proliferation of protocols which
+mandate HTTPS, the requirement for involvement of a Certificate
+Authority to issue TLS certificates for a .onion name is a burden.</t>
+
+<t>Therefore: we propose a standard for Self-Signed TLS Certificates for
+Onion Services, which Tor-enabled clients may optionally honour as
+being as being equally trustworthy to a CA-supplied DV certificate.</t>
+
+<t>This proposal does not replace certification of a .onion name as
+currently, or in future, provided under CABForum BRs; in face we call
+for extension of CABForum BRs to include DV certificates for “Next
+Generation” Onion addresses.</t>
+
+<t>Instead: this standard provides an additional specification to offer
+ad-hoc HTTPS capability to enabled clients in limited circumstances.</t>
 
 </section>
 <section anchor="certificate-fields" title="Certificate Fields">
