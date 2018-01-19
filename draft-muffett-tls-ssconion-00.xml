@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <?xml-stylesheet type="text/xsl" href="rfc2629.xslt" ?>
+
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+<!ENTITY RFC1034 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.1034.xml">
+<!ENTITY RFC1123 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.1123.xml">
+<!ENTITY RFC2119 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml">
+<!ENTITY RFC5280 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.5280.xml">
+<!ENTITY RFC7686 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7686.xml">
+]>
+
+<rfc ipr="trust200902" docName="draft-muffett-tls-ssconion-00" category="info">
+
+
+  <front>
+    <title abbrev="I-D">Self-Signed TLS Certificates for Onion Services</title>
+
+    <author initials="A." surname="Muffett" fullname="Alec Muffett">
+      <organization>Open Rights Group</organization>
+      <address>
+        
+        
+        <email>alec.muffett@gmail.com</email>
+        
+      </address>
+    </author>
+
+    <date year="2018" month="January" day="18"/>
+
+    
+    
+    
+
+    <abstract>
+
+
+<t>A proposal for standardization of self-signed TLS certificates for use
+with “.onion” names as-defined in <xref target="RFC7686"/>, for onion services.</t>
+
+
+
+    </abstract>
+
+
+  </front>
+
+  <middle>
+
+
+<section anchor="introduction" title="Introduction">
+
+<t>TBD</t>
+
+<section anchor="terminology" title="Terminology">
+
+<t>In this document, the key words “MUST”, “MUST NOT”, “REQUIRED”,
+“SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”,
+and “OPTIONAL” are to be interpreted as described in BCP 14, RFC 2119
+<xref target="RFC2119"/>.</t>
+
+<t>In this document, “.onion name” is to be interpreted as described in
+section 1 of <xref target="RFC7686"/>.</t>
+
+<t>In this document “base .onion name” is interpreted to mean the
+lowercase canonical representation of a valid .onion name, shorn of
+any/all subdomain labels and of the “.onion” label; for example the
+base .onion name of “www.foo.facebookcorewwwi.onion” is
+“facebookcorewwwi”.</t>
+
+<t>In this document “wildcard .onion name” is interpreted to mean a name
+which comprises three or more labels, where:</t>
+
+<t><list style='symbols'>
+  <t>the leftmost label is wholly an asterisk (“*”)</t>
+  <t>the rightmost label is “onion”</t>
+  <t>the second-to-rightmost label is a “base .onion name”</t>
+  <t>if the asterisk comprising the leftmost label were replaced with the
+single character “A”, the resulting whole would conform with DNS
+name syntax as defined in Section 3.5 of <xref target="RFC1034"/> and Section 2.1
+of <xref target="RFC1123"/>.</t>
+</list></t>
+
+</section>
+</section>
+<section anchor="insert-content-sections-here-" title="[ Insert content sections here ]">
+
+<section anchor="rationale" title="Rationale">
+
+<t>TBD</t>
+
+</section>
+<section anchor="certificate-fields" title="Certificate Fields">
+
+<t>All fields that are described in this section MUST be present for a
+“Self-Signed TLS Certificate for Onion Services” to be valid.</t>
+
+<t>All fields which are not described in this section MUST NOT exist in
+such a certificate.</t>
+
+<section anchor="signature-algorithm" title="Signature Algorithm">
+
+<t>The signature algorithm must conform with <xref target="RFC5280"/> section 4.1.1.2</t>
+
+<section anchor="signature-algorithm-considerations" title="Signature Algorithm Considerations">
+
+<t>Tor implements perfect forward security at the transport layer; in the
+spirit of this, and given the narrow and legacy-free nature of clients
+which will implement this standard, it would appear retrogressive to
+implement anything that does not also meet that functionality.</t>
+
+<t>Therefore we propose that all certificates under this standard SHOULD
+be signed with ECDSA.  TODO: Can we tighten this up to kill sucky
+algorithms?</t>
+
+</section>
+</section>
+<section anchor="signature-value" title="Signature Value">
+
+<t>The Signature Value field MUST conform with <xref target="RFC5280"/> section 4.1.1.3</t>
+
+</section>
+<section anchor="version" title="Version">
+
+<t>The version field MUST conform with <xref target="RFC5280"/> section 4.1.2.1</t>
+
+</section>
+<section anchor="serial-number" title="Serial Number">
+
+<t>The Serial Number MUST conform with <xref target="RFC5280"/> section 4.1.2.2</t>
+
+<t>From section 4.1.2.2, “The serial number MUST be a positive integer
+… It MUST be unique for each certificate … MUST NOT use
+serialNumber values longer than 20 octets”</t>
+
+<t>In the spirit of that specification, we propose that the serial number
+be constructed as the hex digest of:</t>
+
+<t>Digest ( BaseOnionName NotBefore NotAfter )</t>
+
+<t>…where the following applies:</t>
+
+<t><list style='symbols'>
+  <t>Digest is MD5</t>
+  <t>BaseOnionName is the “base .onion name” (qv) of the Subject
+CommonName</t>
+  <t>NotBefore and NotAfter are from the certificate Validity and are
+represented in ASCII GeneralizedTime Zulu</t>
+</list></t>
+
+<t>Thus a serial number for a certificate valid from midnight 1 January
+2018 UTC to 13:14:15 on 30 June 2019 UTC for
+“www.facebookcorewwwi.onion” would be:</t>
+
+<t>md5(“facebookcorewwwi20180101000000Z20190630131415Z”)</t>
+
+<t>= A8:E2:59:98:F0:2B:E1:40:F6:D2:18:29:8B:68:BB:EA</t>
+
+<section anchor="serial-number-considerations" title="Serial Number Considerations">
+
+<t><list style='symbols'>
+  <t>should we roll the public key into the digest, somehow?</t>
+  <t>should we digest with 20-octet-truncated SHA256 instead?</t>
+</list></t>
+
+</section>
+</section>
+<section anchor="issuer" title="Issuer">
+
+<t>The CommonName for the Issuer MUST be the 29-character ASCII string:
+“Self-Signed Onion Certificate”.</t>
+
+<t>Other Issuer fields MUST conform with <xref target="RFC5280"/> section 4.1.2.4
+conforming to CA/B-Forum BRs for DV Certificates.</t>
+
+</section>
+<section anchor="validity" title="Validity">
+
+<t>The certificate validity MUST conform with <xref target="RFC5280"/> section 4.1.2.5</t>
+
+</section>
+<section anchor="subject" title="Subject">
+
+<t>The CommonName for the Subject MUST be identical to the first DNS Name
+from the list of Subject Alternative Names.</t>
+
+<t>All other Subject fields MUST conform with <xref target="RFC5280"/> section
+4.1.2.6, and MUST also conform with extant CA/B-Forum BRs for DV
+Certificate Subjects.</t>
+
+</section>
+<section anchor="subject-public-key-info" title="Subject Public Key Info">
+
+<t>The Subject Public Key MUST conform with <xref target="RFC5280"/> section 4.2.1.7</t>
+
+<section anchor="subject-public-key-info-considerations" title="Subject Public Key Info Considerations">
+
+<t><list style='symbols'>
+  <t>Per discussion for Signature Algorithm above, it is RECOMMENDED that
+the Subject Public Key Algorithm should be “Elliptic Curve Public
+Key” of length 256.</t>
+  <t>TODO: It would be nice to tighten this up a bit.</t>
+</list></t>
+
+</section>
+</section>
+<section anchor="extensions" title="Extensions">
+
+<t>The Extensions MUST contain a Subject Alternative Name extension.</t>
+
+<t>All other Extensions MUST be excluded.</t>
+
+<section anchor="subject-alternative-names" title="Subject Alternative Names">
+
+<t>Requirements:</t>
+
+<t><list style='symbols'>
+  <t>The Subject Alternative Names MUST only contain “DNS names”.</t>
+  <t>At least one “DNS name” MUST be given.</t>
+  <t>The given “DNS names” MAY be “.onion names”.</t>
+  <t>The given “DNS names” MAY be “wildcard .onion names”</t>
+  <t>The given “DNS names” MUST NOT be other than a “.onion name” or “wildcard .onion name”.</t>
+</list></t>
+
+</section>
+<section anchor="subject-alternative-names-considerations" title="Subject Alternative Names Considerations">
+
+<t><list style='symbols'>
+  <t>Should we set a maximum number?</t>
+</list></t>
+
+</section>
+</section>
+</section>
+<section anchor="security-considerations" title="Security Considerations">
+
+<section anchor="transitive-trust" title="Transitive Trust">
+
+<t>General-purpose HTTP/HTTPS is being extended such that a existing
+browser connection to “www.foo.com” will be reused for requests to
+“www.bar.com” in the instance that “www.bar.com” matches a Subject
+Alternative Name that was provided by the TLS certificate which
+authenticated “www.foo.com”.</t>
+
+<t>This arrangement, under a realm of self-signed certificates, would
+present an obvious security risk of violation of trust roots in Onion
+networking.</t>
+
+<t>Therefore, for the avoidance of this and other similar future security
+issues:</t>
+
+<t><list style='symbols'>
+  <t>A valid Self-Signed TLS Certificate for Onion Services MUST only
+cite a solitary “base .onion name” amongst the Subject Alternative
+Names that it lists.</t>
+  <t>Clients which support Self-Signed TLS Certificates for Onion
+Services MUST NOT trust certificates that cite more than one “base
+.onion name”.</t>
+</list></t>
+
+<t>TODO: if this risk is mitigated elsewhere in the specs, we could maybe
+nuke this section; the risk is in implementations which might unwisely
+trust a Self-Signed TLS Certificate for Onion Services. The above does
+appear to be a desirably robust solution, however.</t>
+
+</section>
+<section anchor="onion-name-types" title="Onion Name Types">
+
+<t>At the time of writing, “base .onion names” are of two types:</t>
+
+<t><list style='symbols'>
+  <t>“old” .onion names, being encodings of truncated SHA-1 hashes</t>
+  <t>“new” or “next generation” names, being encodings of X25519 keys and metadata</t>
+</list></t>
+
+<t>This standard SHALL NOT prohibit generation of Self-Signed TLS
+Certificates for Onion Services for either of these, nor for future,
+types of .onion name.</t>
+
+<t>Clients SHOULD implement fine-grained checks to distingush, and to
+eventually deprecate, legacy types of .onion name.</t>
+
+</section>
+</section>
+</section>
+
+
+  </middle>
+
+  <back>
+
+    <references title='Normative References'>
+
+&RFC1034;
+&RFC1123;
+&RFC2119;
+&RFC5280;
+&RFC7686;
+
+
+    </references>
+
+
+
+
+  </back>
+</rfc>
+

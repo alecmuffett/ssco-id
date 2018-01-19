@@ -1,0 +1,392 @@
+
+
+
+
+Network Working Group                                         A. Muffett
+Internet-Draft                                         Open Rights Group
+Intended status: Informational                          January 18, 2018
+Expires: July 22, 2018
+
+
+            Self-Signed TLS Certificates for Onion Services
+                     draft-muffett-tls-ssconion-00
+
+Abstract
+
+   A proposal for standardization of self-signed TLS certificates for
+   use with ".onion" names as-defined in [RFC7686], for onion services.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at http://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on July 22, 2018.
+
+Copyright Notice
+
+   Copyright (c) 2018 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (http://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+
+
+
+
+
+Muffett                   Expires July 22, 2018                 [Page 1]
+
+Internet-Draft                     I-D                      January 2018
+
+
+1.  Introduction
+
+   TBD
+
+1.1.  Terminology
+
+   In this document, the key words "MUST", "MUST NOT", "REQUIRED",
+   "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY",
+   and "OPTIONAL" are to be interpreted as described in BCP 14, RFC 2119
+   [RFC2119].
+
+   In this document, ".onion name" is to be interpreted as described in
+   section 1 of [RFC7686].
+
+   In this document "base .onion name" is interpreted to mean the
+   lowercase canonical representation of a valid .onion name, shorn of
+   any/all subdomain labels and of the ".onion" label; for example the
+   base .onion name of "www.foo.facebookcorewwwi.onion" is
+   "facebookcorewwwi".
+
+   In this document "wildcard .onion name" is interpreted to mean a name
+   which comprises three or more labels, where:
+
+   o  the leftmost label is wholly an asterisk ("*")
+
+   o  the rightmost label is "onion"
+
+   o  the second-to-rightmost label is a "base .onion name"
+
+   o  if the asterisk comprising the leftmost label were replaced with
+      the single character "A", the resulting whole would conform with
+      DNS name syntax as defined in Section 3.5 of [RFC1034] and
+      Section 2.1 of [RFC1123].
+
+2.  [ Insert content sections here ]
+
+2.1.  Rationale
+
+   TBD
+
+2.2.  Certificate Fields
+
+   All fields that are described in this section MUST be present for a
+   "Self-Signed TLS Certificate for Onion Services" to be valid.
+
+   All fields which are not described in this section MUST NOT exist in
+   such a certificate.
+
+
+
+
+Muffett                   Expires July 22, 2018                 [Page 2]
+
+Internet-Draft                     I-D                      January 2018
+
+
+2.2.1.  Signature Algorithm
+
+   The signature algorithm must conform with [RFC5280] section 4.1.1.2
+
+2.2.1.1.  Signature Algorithm Considerations
+
+   Tor implements perfect forward security at the transport layer; in
+   the spirit of this, and given the narrow and legacy-free nature of
+   clients which will implement this standard, it would appear
+   retrogressive to implement anything that does not also meet that
+   functionality.
+
+   Therefore we propose that all certificates under this standard SHOULD
+   be signed with ECDSA.  TODO: Can we tighten this up to kill sucky
+   algorithms?
+
+2.2.2.  Signature Value
+
+   The Signature Value field MUST conform with [RFC5280] section 4.1.1.3
+
+2.2.3.  Version
+
+   The version field MUST conform with [RFC5280] section 4.1.2.1
+
+2.2.4.  Serial Number
+
+   The Serial Number MUST conform with [RFC5280] section 4.1.2.2
+
+   From section 4.1.2.2, "The serial number MUST be a positive integer
+   ... It MUST be unique for each certificate ... MUST NOT use
+   serialNumber values longer than 20 octets"
+
+   In the spirit of that specification, we propose that the serial
+   number be constructed as the hex digest of:
+
+   Digest ( BaseOnionName NotBefore NotAfter )
+
+   ...where the following applies:
+
+   o  Digest is MD5
+
+   o  BaseOnionName is the "base .onion name" (qv) of the Subject
+      CommonName
+
+   o  NotBefore and NotAfter are from the certificate Validity and are
+      represented in ASCII GeneralizedTime Zulu
+
+
+
+
+
+Muffett                   Expires July 22, 2018                 [Page 3]
+
+Internet-Draft                     I-D                      January 2018
+
+
+   Thus a serial number for a certificate valid from midnight 1 January
+   2018 UTC to 13:14:15 on 30 June 2019 UTC for
+   "www.facebookcorewwwi.onion" would be:
+
+   md5("facebookcorewwwi20180101000000Z20190630131415Z")
+
+   = A8:E2:59:98:F0:2B:E1:40:F6:D2:18:29:8B:68:BB:EA
+
+2.2.4.1.  Serial Number Considerations
+
+   o  should we roll the public key into the digest, somehow?
+
+   o  should we digest with 20-octet-truncated SHA256 instead?
+
+2.2.5.  Issuer
+
+   The CommonName for the Issuer MUST be the 29-character ASCII string:
+   "Self-Signed Onion Certificate".
+
+   Other Issuer fields MUST conform with [RFC5280] section 4.1.2.4
+   conforming to CA/B-Forum BRs for DV Certificates.
+
+2.2.6.  Validity
+
+   The certificate validity MUST conform with [RFC5280] section 4.1.2.5
+
+2.2.7.  Subject
+
+   The CommonName for the Subject MUST be identical to the first DNS
+   Name from the list of Subject Alternative Names.
+
+   All other Subject fields MUST conform with [RFC5280] section 4.1.2.6,
+   and MUST also conform with extant CA/B-Forum BRs for DV Certificate
+   Subjects.
+
+2.2.8.  Subject Public Key Info
+
+   The Subject Public Key MUST conform with [RFC5280] section 4.2.1.7
+
+2.2.8.1.  Subject Public Key Info Considerations
+
+   o  Per discussion for Signature Algorithm above, it is RECOMMENDED
+      that the Subject Public Key Algorithm should be "Elliptic Curve
+      Public Key" of length 256.
+
+   o  TODO: It would be nice to tighten this up a bit.
+
+
+
+
+
+Muffett                   Expires July 22, 2018                 [Page 4]
+
+Internet-Draft                     I-D                      January 2018
+
+
+2.2.9.  Extensions
+
+   The Extensions MUST contain a Subject Alternative Name extension.
+
+   All other Extensions MUST be excluded.
+
+2.2.9.1.  Subject Alternative Names
+
+   Requirements:
+
+   o  The Subject Alternative Names MUST only contain "DNS names".
+
+   o  At least one "DNS name" MUST be given.
+
+   o  The given "DNS names" MAY be ".onion names".
+
+   o  The given "DNS names" MAY be "wildcard .onion names"
+
+   o  The given "DNS names" MUST NOT be other than a ".onion name" or
+      "wildcard .onion name".
+
+2.2.9.2.  Subject Alternative Names Considerations
+
+   o  Should we set a maximum number?
+
+2.3.  Security Considerations
+
+2.3.1.  Transitive Trust
+
+   General-purpose HTTP/HTTPS is being extended such that a existing
+   browser connection to "www.foo.com" will be reused for requests to
+   "www.bar.com" in the instance that "www.bar.com" matches a Subject
+   Alternative Name that was provided by the TLS certificate which
+   authenticated "www.foo.com".
+
+   This arrangement, under a realm of self-signed certificates, would
+   present an obvious security risk of violation of trust roots in Onion
+   networking.
+
+   Therefore, for the avoidance of this and other similar future
+   security issues:
+
+   o  A valid Self-Signed TLS Certificate for Onion Services MUST only
+      cite a solitary "base .onion name" amongst the Subject Alternative
+      Names that it lists.
+
+
+
+
+
+
+Muffett                   Expires July 22, 2018                 [Page 5]
+
+Internet-Draft                     I-D                      January 2018
+
+
+   o  Clients which support Self-Signed TLS Certificates for Onion
+      Services MUST NOT trust certificates that cite more than one "base
+      .onion name".
+
+   TODO: if this risk is mitigated elsewhere in the specs, we could
+   maybe nuke this section; the risk is in implementations which might
+   unwisely trust a Self-Signed TLS Certificate for Onion Services.  The
+   above does appear to be a desirably robust solution, however.
+
+2.3.2.  Onion Name Types
+
+   At the time of writing, "base .onion names" are of two types:
+
+   o  "old" .onion names, being encodings of truncated SHA-1 hashes
+
+   o  "new" or "next generation" names, being encodings of X25519 keys
+      and metadata
+
+   This standard SHALL NOT prohibit generation of Self-Signed TLS
+   Certificates for Onion Services for either of these, nor for future,
+   types of .onion name.
+
+   Clients SHOULD implement fine-grained checks to distingush, and to
+   eventually deprecate, legacy types of .onion name.
+
+3.  Normative References
+
+   [RFC1034]  Mockapetris, P., "Domain names - concepts and facilities",
+              STD 13, RFC 1034, DOI 10.17487/RFC1034, November 1987,
+              <https://www.rfc-editor.org/info/rfc1034>.
+
+   [RFC1123]  Braden, R., Ed., "Requirements for Internet Hosts -
+              Application and Support", STD 3, RFC 1123, DOI 10.17487/
+              RFC1123, October 1989, <https://www.rfc-editor.org/info/
+              rfc1123>.
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119, March 1997.
+
+   [RFC5280]  Cooper, D., Santesson, S., Farrell, S., Boeyen, S.,
+              Housley, R., and W. Polk, "Internet X.509 Public Key
+              Infrastructure Certificate and Certificate Revocation List
+              (CRL) Profile", RFC 5280, DOI 10.17487/RFC5280, May 2008,
+              <https://www.rfc-editor.org/info/rfc5280>.
+
+   [RFC7686]  Appelbaum, J. and A. Muffett, "The ".onion" Special-Use
+              Domain Name", RFC 7686, DOI 10.17487/RFC7686, October
+              2015, <https://www.rfc-editor.org/info/rfc7686>.
+
+
+
+Muffett                   Expires July 22, 2018                 [Page 6]
+
+Internet-Draft                     I-D                      January 2018
+
+
+Author's Address
+
+   Alec Muffett
+   Open Rights Group
+
+   Email: alec.muffett@gmail.com
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Muffett                   Expires July 22, 2018                 [Page 7]
