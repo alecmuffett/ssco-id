@@ -16,7 +16,7 @@
     <title abbrev="I-D">Self-Signed TLS Certificates for Onion Services</title>
 
     <author initials="A." surname="Muffett" fullname="Alec Muffett">
-      <organization>Open Rights Group</organization>
+      <organization>(To Be Decided)</organization>
       <address>
         
         
@@ -180,6 +180,7 @@ represented in ASCII GeneralizedTime Zulu</t>
 <t><list style='symbols'>
   <t>should we roll the public key into the digest, somehow?</t>
   <t>should we digest with 20-octet-truncated SHA256 instead?</t>
+  <t>should we roll all of the SANs through the digest, instead?</t>
 </list></t>
 
 </section>

@@ -10,7 +10,7 @@ author:
  -
     ins: A. Muffett
     name: Alec Muffett
-    organization: Open Rights Group
+    organization: (To Be Decided)
     email: alec.muffett@gmail.com
 
 normative:
@@ -150,6 +150,7 @@ md5("facebookcorewwwi20180101000000Z20190630131415Z")
 
 * should we roll the public key into the digest, somehow?
 * should we digest with 20-octet-truncated SHA256 instead?
+* should we roll all of the SANs through the digest, instead?
 
 ### Issuer
 

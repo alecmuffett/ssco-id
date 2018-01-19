@@ -3,7 +3,7 @@
 
 
 Network Working Group                                         A. Muffett
-Internet-Draft                                         Open Rights Group
+Internet-Draft                                           (To Be Decided)
 Intended status: Informational                          January 18, 2018
 Expires: July 22, 2018
 
@@ -207,6 +207,8 @@ Internet-Draft                     I-D                      January 2018
 
    o  should we digest with 20-octet-truncated SHA256 instead?
 
+   o  should we roll all of the SANs through the digest, instead?
+
 2.2.5.  Issuer
 
    The CommonName for the Issuer MUST be the 29-character ASCII string:
@@ -214,8 +216,6 @@ Internet-Draft                     I-D                      January 2018
 
    Other Issuer fields MUST conform with [RFC5280] section 4.1.2.4
    conforming to CA/B-Forum BRs for DV Certificates.
-
-
 
 
 
@@ -368,7 +368,7 @@ Internet-Draft                     I-D                      January 2018
 Author's Address
 
    Alec Muffett
-   Open Rights Group
+   (To Be Decided)
 
    Email: alec.muffett@gmail.com
 
