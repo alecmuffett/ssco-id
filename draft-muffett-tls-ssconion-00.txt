@@ -119,9 +119,9 @@ Internet-Draft                     I-D                      January 2018
    being as being equally trustworthy to a CA-supplied DV certificate.
 
    This proposal does not replace certification of a .onion name as
-   currently, or in future, provided under CABForum BRs; in face we call
-   for extension of CABForum BRs to include DV certificates for "Next
-   Generation" Onion addresses.
+   currently, or in future, provided under CABForum BRs; in fact we
+   appeal for extension of CABForum BRs to include DV certification for
+   "Next Generation" Onion addresses.
 
    Instead: this standard provides an additional specification to offer
    ad-hoc HTTPS capability to enabled clients in limited circumstances.
@@ -230,6 +230,9 @@ Internet-Draft                     I-D                      January 2018
 
    The certificate validity MUST conform with [RFC5280] section 4.1.2.5
 
+   o  TODO: should we set a max 1-year validity, or less, to assure
+      ongoing housekeeping and freshness?
+
 2.2.7.  Subject
 
    The CommonName for the Subject MUST be identical to the first DNS
@@ -271,9 +274,6 @@ Internet-Draft                     I-D                      January 2018
 
    o  The given "DNS names" MUST NOT be other than a ".onion name" or
       "wildcard .onion name".
-
-
-
 
 
 

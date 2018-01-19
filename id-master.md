@@ -79,9 +79,9 @@ Onion Services, which Tor-enabled clients may optionally honour as
 being as being equally trustworthy to a CA-supplied DV certificate.
 
 This proposal does not replace certification of a .onion name as
-currently, or in future, provided under CABForum BRs; in face we call
-for extension of CABForum BRs to include DV certificates for "Next
-Generation" Onion addresses.
+currently, or in future, provided under CABForum BRs; in fact we
+appeal for extension of CABForum BRs to include DV certification for
+"Next Generation" Onion addresses.
 
 Instead: this standard provides an additional specification to offer
 ad-hoc HTTPS capability to enabled clients in limited circumstances.
@@ -162,6 +162,9 @@ conforming to CA/B-Forum BRs for DV Certificates.
 ### Validity
 
 The certificate validity MUST conform with {{RFC5280}} section 4.1.2.5
+
+* TODO: should we set a max 1-year validity, or less, to assure
+  ongoing housekeeping and freshness?
 
 ### Subject
 
