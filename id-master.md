@@ -76,7 +76,7 @@ Authority to issue TLS certificates for a .onion name is a burden.
 
 Therefore: we propose a standard for Self-Signed TLS Certificates for
 Onion Services, which Tor-enabled clients may optionally honour as
-being as being equally trustworthy to a CA-supplied DV certificate.
+being equally trustworthy to a CA-supplied DV certificate.
 
 This proposal does not replace certification of a .onion name as
 currently, or in future, provided under CABForum BRs; in fact we
